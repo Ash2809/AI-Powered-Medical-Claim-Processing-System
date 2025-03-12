@@ -1,11 +1,10 @@
-from ocr import extract_invoice_details
+from src.ocr import extract_invoice_details
 import re
 import joblib
 import numpy as np
 
 with open(r"C:\Advance_Projects\AI-Powered-Medical-Claim-Processing-System\models\model.pkl", "rb") as file:
     model = joblib.load(file)
-    print(model)
 
 
 def classify_invoice(extracted_data):
