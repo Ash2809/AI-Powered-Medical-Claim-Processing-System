@@ -1,50 +1,33 @@
 from ocr import extract_invoice_details
 import re
+import joblib
+import numpy as np
+
+with open(r"C:\Advance_Projects\AI-Powered-Medical-Claim-Processing-System\models\model.pkl", "rb") as file:
+    model = joblib.load(file)
+    print(model)
+
 
 def classify_invoice(extracted_data):
-    reasons = []
-
-    if not extracted_data["patient_name"]:
-        reasons.append("Missing patient name.")
-    if not extracted_data["claim_amount"]:
-        reasons.append("Missing claim amount.")
-
     try:
-        claim_amount = float(extracted_data["claim_amount"].replace(",", "").replace("$", ""))
-        if claim_amount > 20000:
-            reasons.append("Claim amount is unusually high.")
+        claim_amount = extracted_data.get("claim_amount", "0").replace(",", "").replace("$", "")
+        claim_amount = float(claim_amount)
     except ValueError:
-        reasons.append("Invalid claim amount format.")
+        return True 
+    
+    print(claim_amount)
+    prediction = model.predict([[claim_amount]])[0]
 
-    if extracted_data["date_of_service"]:
-        try:
-            service_date = extracted_data["date_of_service"]
-            issue_date = extracted_data.get("issue_date")  
-            if issue_date and service_date > issue_date:
-                reasons.append("Due date is before the issue date.")
-        except Exception:
-            reasons.append("Date format error.")
+    if(prediction == 1):
+        return False
+    else:
+        return True
 
-    if any(len(value) > 50 for value in extracted_data.values() if value):
-        reasons.append("Possible OCR text corruption detected.")
-
-    if reasons:
-        return "Fraudulent", reasons
-    return "Valid", []
 
 if __name__ == "__main__":
     path = r"C:\Users\aashutosh kumar\Downloads\free-medical-invoice-template.png"
     
     extracted_info = extract_invoice_details(path)
-    classification, reasons = classify_invoice(extracted_info)
-
-    print("===== Extracted Invoice Details =====")
-    for key, value in extracted_info.items():
-        print(f"{key.replace('_', ' ').title()}: {value}")
-    print("=====================================")
+    is_fraud = classify_invoice(extracted_info)
     
-    print(f"Invoice Classification: {classification}")
-    if reasons:
-        print("Reasons for Classification:")
-        for reason in reasons:
-            print(f"- {reason}")
+    print(f"Fraudulent: {is_fraud}")
