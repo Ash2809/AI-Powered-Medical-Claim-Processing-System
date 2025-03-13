@@ -22,7 +22,9 @@ app.add_middleware(
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+# UPLOAD_DIR = os.path.join(os.getcwd(), "uploads")
+UPLOAD_DIR = "/tmp/uploads"  # Use a temporary directory for EC2
+
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 @app.post("/upload-invoice/")
