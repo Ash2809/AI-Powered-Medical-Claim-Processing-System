@@ -57,7 +57,7 @@ export default function Login() {
                 </form>
 
                 <div className="auth-links">
-                    <p>Don't have an account? <Link href="/signup">Sign Up</Link></p>
+                    <p>Don&apos;t have an account? <Link href="/signup">Sign Up</Link></p>
                 </div>
             </div>
         </div>
