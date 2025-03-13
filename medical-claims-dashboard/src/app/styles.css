@@ -1,6 +1,3 @@
-/* styles.css */
-
-/* Global Styles */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -8,7 +5,6 @@ body {
     background-color: #f4f4f4;
   }
   
-  /* Navbar */
   .navbar {
     background-color: #333;
     color: white;
@@ -16,7 +12,6 @@ body {
     text-align: center;
   }
   
-  /* Container */
   .container {
     max-width: 800px;
     margin: 20px auto;
@@ -26,7 +21,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
   
-  /* Button */
   .button {
     background-color: #007bff;
     color: white;
@@ -37,7 +31,6 @@ body {
     transition: background 0.3s;
   }
 
-  /* Login Card */
 .login-container {
     display: flex;
     justify-content: center;
@@ -109,7 +102,6 @@ body {
     background-color: #0056b3;
   }
 
-/* Dashboard Container */
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -119,7 +111,6 @@ body {
     padding-top: 60px;
 }
 
-/* Navbar */
 .navbar {
     background: #007bff;
     color: white;
@@ -146,7 +137,6 @@ body {
     color: #ffdd57;
 }
 
-/* Dashboard Content */
 .dashboard-card {
     background: white;
     padding: 20px;
@@ -161,7 +151,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* File Upload Section */
 .upload-section {
     width: 100%;
     padding: 20px;
@@ -199,14 +188,13 @@ body {
     cursor: pointer;
     border-radius: 5px;
     transition: background 0.3s;
-    margin-top: 15px; /* Moves button below preview */
+    margin-top: 15px; 
 }
 
 .upload-button:hover {
     background-color: #0056b3;
 }
 
-/* Image Preview */
 .image-preview {
     margin-top: 15px;
     display: flex;
@@ -219,4 +207,40 @@ body {
     max-height: 150px;
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.invoice-table td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+.invoice-table td:first-child {
+    font-weight: bold;
+    background-color: #f8f8f8;
+}
+
+.loading-spinner {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

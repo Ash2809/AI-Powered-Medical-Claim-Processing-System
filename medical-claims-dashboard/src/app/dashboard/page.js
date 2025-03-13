@@ -1,115 +1,14 @@
-// "use client";
-// import { useState } from "react";
-
-// export default function Dashboard() {
-//     const [file, setFile] = useState(null);
-//     const [dragActive, setDragActive] = useState(false);
-//     const [claims, setClaims] = useState([
-//         { id: 1, patient: "John Doe", amount: "$500", status: "Approved" },
-//         { id: 2, patient: "Jane Smith", amount: "$750", status: "Pending" }
-//     ]);
-
-//     // Handles file selection from input
-//     const handleFileChange = (event) => {
-//         const uploadedFile = event.target.files[0];
-//         if (uploadedFile) {
-//             setFile(uploadedFile);
-//         }
-//     };
-
-//     // Handles file drop
-//     const handleDrop = (event) => {
-//         event.preventDefault();
-//         setDragActive(false);
-//         if (event.dataTransfer.files.length > 0) {
-//             setFile(event.dataTransfer.files[0]);
-//         }
-//     };
-
-//     // Prevents default browser behavior for drag events
-//     const handleDragOver = (event) => {
-//         event.preventDefault();
-//         setDragActive(true);
-//     };
-
-//     const handleDragLeave = () => setDragActive(false);
-
-//     // Handles file upload logic
-//     const handleUpload = () => {
-//         if (!file) {
-//             alert("Please select a file first.");
-//             return;
-//         }
-
-//         // Simulating upload process
-//         alert(`File uploaded successfully: ${file.name}`);
-
-//         // Clear file input field & reset state
-//         setFile(null);
-//         document.getElementById("fileUpload").value = ""; // Clears UI input
-//     };
-
-//     return (
-//         <div className="dashboard-container">
-//             <div className="dashboard-card">
-//                 <h2>Medical Claims Dashboard</h2>
-
-//                 {/* File Upload Section */}
-//                 <div 
-//                     className={`upload-section ${dragActive ? "drag-active" : ""}`} 
-//                     onDragOver={handleDragOver} 
-//                     onDragLeave={handleDragLeave} 
-//                     onDrop={handleDrop}
-//                 >
-//                     <input
-//                         type="file"
-//                         id="fileUpload"
-//                         onChange={handleFileChange}
-//                         accept=".pdf,.jpg,.png,.jpeg"
-//                         hidden
-//                     />
-//                     <label htmlFor="fileUpload" className="upload-label">
-//                         <p>{file ? `Selected File: ${file.name}` : "Drag & Drop or Click to Upload"}</p>
-//                     </label>
-//                     <button className="upload-button" onClick={handleUpload}>Upload</button>
-//                 </div>
-
-//                 {/* Table Displaying Processed Claims */}
-//                 <h3>Processed Claims</h3>
-//                 <table className="claims-table">
-//                     <thead>
-//                         <tr>
-//                             <th>ID</th>
-//                             <th>Patient</th>
-//                             <th>Amount</th>
-//                             <th>Status</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody>
-//                         {claims.map((claim) => (
-//                             <tr key={claim.id}>
-//                                 <td>{claim.id}</td>
-//                                 <td>{claim.patient}</td>
-//                                 <td>{claim.amount}</td>
-//                                 <td>{claim.status}</td>
-//                             </tr>
-//                         ))}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </div>
-//     );
-// }
-
 "use client";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
     const [file, setFile] = useState(null);
     const [dragging, setDragging] = useState(false);
     const [preview, setPreview] = useState(null);
+    const [invoiceDetails, setInvoiceDetails] = useState(null);
+    const [loading, setLoading] = useState(false); 
 
-    // Handle file selection
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
         if (selectedFile && isValidFileType(selectedFile)) {
@@ -120,12 +19,10 @@ export default function Dashboard() {
         }
     };
 
-    // Validate file type
     const isValidFileType = (file) => {
         return ["image/png", "image/jpeg", "image/jpg"].includes(file.type);
     };
 
-    // Handle drag & drop
     const handleDragOver = (event) => {
         event.preventDefault();
         setDragging(true);
@@ -148,15 +45,34 @@ export default function Dashboard() {
         }
     };
 
-    // Simulate file upload
-    const handleUpload = () => {
+    const handleUpload = async () => {
         if (!file) {
             alert("Please select a file first.");
             return;
         }
-        alert(`File uploaded: ${file.name}`);
-        setFile(null);
-        setPreview(null); // Clear preview after upload
+    
+        setLoading(true); 
+        const formData = new FormData();
+        formData.append("file", file);
+    
+        try {
+            const response = await axios.post("http://localhost:8000/upload-invoice/", formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            setLoading(false); 
+            alert("File uploaded successfully!");
+            console.log("Response:", response.data);
+
+            setInvoiceDetails(response.data);
+
+            setFile(null);
+            setPreview(null);
+        } catch (error) {
+            setLoading(false); 
+            alert("Upload failed. Please try again.");
+            console.error("Upload Error:", error);
+        }
     };
 
     return (
@@ -164,7 +80,6 @@ export default function Dashboard() {
             <div className="dashboard-card">
                 <h2>Medical Claims Dashboard</h2>
 
-                {/* File Upload Section */}
                 <div
                     className={`upload-section ${dragging ? "dragging" : ""}`}
                     onDragOver={handleDragOver}
@@ -176,24 +91,63 @@ export default function Dashboard() {
                         id="fileUpload"
                         onChange={handleFileChange}
                         accept="image/png, image/jpeg, image/jpg"
-                        style={{ display: "none" }} // Hide input
+                        style={{ display: "none" }}
                     />
                     <label htmlFor="fileUpload" className="upload-label">
                         Drag & Drop or <span className="underline">Click to Upload</span>
                     </label>
 
-                    {/* Show preview if an image is selected */}
                     {preview && (
                         <div className="image-preview">
                             <img src={preview} alt="Preview" />
                         </div>
                     )}
 
-                    {/* Upload button below preview */}
-                    <button className="upload-button" onClick={handleUpload}>
-                        Upload
+                    <button className="upload-button" onClick={handleUpload} disabled={loading}>
+                        {loading ? "Processing..." : "Upload"}
                     </button>
+
+                    {loading && (
+                        <div className="loading-spinner">
+                            <div className="spinner"></div>
+                            <p>Please wait, processing your invoice...</p>
+                        </div>
+                    )}
                 </div>
+
+                {invoiceDetails && (
+                    <div className="invoice-details">
+                        <h3>Extracted Invoice Data</h3>
+                        <table className="invoice-table">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Invoice ID</strong></td>
+                                    <td>{invoiceDetails.invoice_id}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Patient Name</strong></td>
+                                    <td>{invoiceDetails.invoice_data.patient_name || "N/A"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Claim Amount</strong></td>
+                                    <td>{invoiceDetails.invoice_data.claim_amount || "N/A"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Diagnosis</strong></td>
+                                    <td>{invoiceDetails.invoice_data.diagnosis || "N/A"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Date of Service</strong></td>
+                                    <td>{invoiceDetails.invoice_data.date_of_service || "N/A"}</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fraudulent</strong></td>
+                                    <td>{invoiceDetails.fraudulent ? "Yes" : "No"}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                )}
             </div>
         </div>
     );

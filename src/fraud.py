@@ -24,7 +24,7 @@ def classify_invoice(extracted_data):
 
 
 if __name__ == "__main__":
-    path = r"C:\Users\aashutosh kumar\Downloads\free-medical-invoice-template.png"
+    path = r"C:\Users\aashutosh kumar\Downloads\Screenshot 2025-03-13 093208.png"
     
     extracted_info = extract_invoice_details(path)
     is_fraud = classify_invoice(extracted_info)
