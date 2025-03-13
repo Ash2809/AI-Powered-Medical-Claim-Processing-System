@@ -1,13 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import Image from "next/image";
 
 export default function Dashboard() {
     const [file, setFile] = useState(null);
     const [dragging, setDragging] = useState(false);
     const [preview, setPreview] = useState(null);
     const [invoiceDetails, setInvoiceDetails] = useState(null);
-    const [loading, setLoading] = useState(false); 
+    const [loading, setLoading] = useState(false);
+
+    // Clean up preview URL to prevent memory leaks
+    useEffect(() => {
+        return () => {
+            if (preview) URL.revokeObjectURL(preview);
+        };
+    }, [preview]);
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files[0];
@@ -50,17 +58,17 @@ export default function Dashboard() {
             alert("Please select a file first.");
             return;
         }
-    
-        setLoading(true); 
+
+        setLoading(true);
         const formData = new FormData();
         formData.append("file", file);
-    
+
         try {
-            const response = await axios.post("http://localhost:8000/upload-invoice/", formData, {
+            const response = await axios.post("http://51.20.82.141:8000/upload-invoice/", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            setLoading(false); 
+            setLoading(false);
             alert("File uploaded successfully!");
             console.log("Response:", response.data);
 
@@ -69,7 +77,7 @@ export default function Dashboard() {
             setFile(null);
             setPreview(null);
         } catch (error) {
-            setLoading(false); 
+            setLoading(false);
             alert("Upload failed. Please try again.");
             console.error("Upload Error:", error);
         }
@@ -99,7 +107,7 @@ export default function Dashboard() {
 
                     {preview && (
                         <div className="image-preview">
-                            <img src={preview} alt="Preview" />
+                            <Image src={preview} alt="Preview" width={500} height={300} />
                         </div>
                     )}
 
