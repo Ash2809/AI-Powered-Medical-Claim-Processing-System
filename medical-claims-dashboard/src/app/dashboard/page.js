@@ -64,9 +64,9 @@ export default function Dashboard() {
         formData.append("file", file);
 
         try {
-            const response = await axios.post("http://51.20.82.141:8000/upload-invoice/", formData, {
+            const response = await axios.post("/api/proxy", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
-            });
+            });            
 
             setLoading(false);
             alert("File uploaded successfully!");
