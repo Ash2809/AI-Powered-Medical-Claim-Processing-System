@@ -3,10 +3,15 @@ import re
 import joblib
 import numpy as np
 
-with open(r"C:\Advance_Projects\AI-Powered-Medical-Claim-Processing-System\models\model.pkl", "rb") as file:
+# with open(r"C:\Advance_Projects\AI-Powered-Medical-Claim-Processing-System\models\model.pkl", "rb") as file:
+#     model = joblib.load(file)
+
+import os
+
+model_path = os.path.join(os.getcwd(), "models", "model.pkl")  # Get model path dynamically
+with open(model_path, "rb") as file:
     model = joblib.load(file)
-
-
+    
 def classify_invoice(extracted_data):
     try:
         claim_amount = extracted_data.get("claim_amount", "0").replace(",", "").replace("$", "")
