@@ -1,8 +1,6 @@
-// src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-// Your Firebase project config
 const firebaseConfig = {
   apiKey: "AIzaSyAkm6NSUsOV1G0Fr_ZaAT68Xc5Do4Z2bVM",
   authDomain: "ai-mediclaim.firebaseapp.com",
@@ -12,7 +10,6 @@ const firebaseConfig = {
   appId: "1:714497089071:web:xxxxxxxxxxxxx"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 

@@ -58,30 +58,32 @@ export default function Dashboard() {
             alert("Please select a file first.");
             return;
         }
-
+    
         setLoading(true);
         const formData = new FormData();
         formData.append("file", file);
-
+    
         try {
+            console.log(" Sending file to /api/proxy...");
+            
             const response = await axios.post("/api/proxy", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
-            });            
-
+            });
+    
+            console.log(" Server Response:", response.data);
+    
             setLoading(false);
             alert("File uploaded successfully!");
-            console.log("Response:", response.data);
-
             setInvoiceDetails(response.data);
-
             setFile(null);
             setPreview(null);
         } catch (error) {
             setLoading(false);
-            alert("Upload failed. Please try again.");
-            console.error("Upload Error:", error);
+            console.error(" Upload Error:", error);
+            alert(`Upload failed: ${error.response?.data?.error || "Server error"}`);
         }
     };
+    
 
     return (
         <div className="dashboard-container">
